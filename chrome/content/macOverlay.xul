@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+# -*- Mode: HTML -*-
+#
+# ***** BEGIN LICENSE BLOCK *****
+# Version: MPL 1.1/GPL 2.0/LGPL 2.1
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with
+# the License. You may obtain a copy of the License at
+# http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# The Original Code is Mozilla Communicator client code, released
+# March 31, 1998.
+#
+# The Initial Developer of the Original Code is
+# Netscape Communications Corporation.
+# Portions created by the Initial Developer are Copyright (C) 1998-2000
+# the Initial Developer. All Rights Reserved.
+#
+# Contributor(s):
+#   David Hyatt <hyatt@mozilla.org> (Original Author)
+#   Asaf Romano <mozilla.mano@sent.com>
+#
+# Alternatively, the contents of this file may be used under the terms of
+# either the GNU General Public License Version 2 or later (the "GPL"), or
+# the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+# in which case the provisions of the GPL or the LGPL are applicable instead
+# of those above. If you wish to allow use of your version of this file only
+# under the terms of either the GPL or the LGPL, and not to allow others to
+# use your version of this file under the terms of the MPL, indicate your
+# decision by deleting the provisions above and replace them with the notice
+# and other provisions required by the GPL or the LGPL. If you do not delete
+# the provisions above, a recipient may use your version of this file under
+# the terms of any one of the MPL, the GPL or the LGPL.
+#
+# ***** END LICENSE BLOCK *****
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
+<?xul-overlay href="chrome://playground/content/baseMenuOverlay.xul"?>
+
+# All DTD information is stored in a separate file so that it can be shared by
+# hiddenWindow.xul.
+#include browser-doctype.inc
+
+<overlay id="hidden-overlay"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+# All JS files which are not content (only) dependent that browser.xul
+# wishes to include *must* go into the global-scripts.inc file
+# so that they can be shared by this overlay.
+# include global-scripts.inc
+
+<script type="application/javascript">
+  function OpenBrowserWindowFromDockMenu() {
+    let dockSupport = Cc["@mozilla.org/widget/macdocksupport;1"]
+                      .getService(Ci.nsIMacDockSupport);
+    dockSupport.activateApplication(true);
+
+    return OpenBrowserWindow();
+	}
+
+// nonBrowserWindowStartup(), nonBrowserWindowDelayedStartup(), and
+// nonBrowserWindowShutdown() are used for non-browser windows in
+// macBrowserOverlay
+function nonBrowserWindowStartup() {
+  // Disable inappropriate commands / submenus
+  var disabledItems = ['Browser:SavePage',
+                       'Browser:SendLink', 'cmd_pageSetup', 'cmd_print', 'cmd_find', 'cmd_findAgain',
+                       'viewToolbarsMenu', 'viewSidebarMenuMenu', 'Browser:Reload',
+                       'viewFullZoomMenu', 'pageStyleMenu', 'charsetMenu', 'View:PageSource', 'View:FullScreen',
+                       'viewHistorySidebar', 'Browser:AddBookmarkAs', 'Browser:BookmarkAllTabs',
+                       'View:PageInfo', 'Tasks:InspectPage', 'Browser:ToggleTabView', ];
+  var element;
+
+  for (var id in disabledItems) {
+    element = document.getElementById(disabledItems[id]);
+    if (element)
+      element.setAttribute("disabled", "true");
+  }
+
+  // If no windows are active (i.e. we're the hidden window), disable the close, minimize
+  // and zoom menu commands as well
+  if (window.location.href == "chrome://browser/content/hiddenWindow.xul") {
+    var hiddenWindowDisabledItems = ['cmd_close', 'minimizeWindow', 'zoomWindow'];
+    for (var id in hiddenWindowDisabledItems) {
+      element = document.getElementById(hiddenWindowDisabledItems[id]);
+      if (element)
+        element.setAttribute("disabled", "true");
+    }
+
+    // also hide the window-list separator
+    element = document.getElementById("sep-window-list");
+    element.setAttribute("hidden", "true");
+
+    // Setup the dock menu.
+    let dockMenuElement = document.getElementById("menu_mac_dockmenu");
+    if (dockMenuElement != null) {
+      let nativeMenu = Cc["@mozilla.org/widget/standalonenativemenu;1"]
+                       .createInstance(Ci.nsIStandaloneNativeMenu);
+
+      try {
+        nativeMenu.init(dockMenuElement);
+
+        let dockSupport = Cc["@mozilla.org/widget/macdocksupport;1"]
+                          .getService(Ci.nsIMacDockSupport);
+        dockSupport.dockMenu = nativeMenu;
+      }
+      catch (e) {
+      }
+    }
+  }
+
+  gDelayedStartupTimeoutId = setTimeout(nonBrowserWindowDelayedStartup, 0);
+}
+
+function nonBrowserWindowDelayedStartup() {
+  gDelayedStartupTimeoutId = null;
+
+  // initialise the offline listener
+	//BrowserOffline.init();
+
+  // Set up Sanitize Item
+	//initializeSanitizer();
+
+  // initialize the private browsing UI
+	//gPrivateBrowsingUI.init();
+
+#ifdef MOZ_SERVICES_SYNC
+  // initialize the sync UI
+	//gSyncUI.init();
+#endif
+
+  gStartupRan = true;
+}
+
+function nonBrowserWindowShutdown() {
+  // If nonBrowserWindowDelayedStartup hasn't run yet, we have no work to do -
+  // just cancel the pending timeout and return;
+  if (gDelayedStartupTimeoutId) {
+    clearTimeout(gDelayedStartupTimeoutId);
+    return;
+  }
+
+	//BrowserOffline.uninit();
+
+	//gPrivateBrowsingUI.uninit();
+}
+
+
+  addEventListener("load", nonBrowserWindowStartup, false);
+  addEventListener("unload", nonBrowserWindowShutdown, false);
+</script>
+
+# All sets except for popupsets (commands, keys, stringbundles and broadcasters) *must* go into the 
+# browser-sets.inc file for sharing with hiddenWindow.xul.
+# include browser-sets.inc
+
+# The entire main menubar is placed into browser-menubar.inc, so that it can be shared by 
+# hiddenWindow.xul.
+# include browser-menubar.inc
+
+<!-- Dock menu -->
+<popupset>
+  <menupopup id="menu_mac_dockmenu">
+    <!-- The command cannot be cmd_newNavigator because we need to activate
+         the application. -->
+    <menuitem label="&newNavigatorCmd.label;" oncommand="OpenBrowserWindowFromDockMenu();" />
+  </menupopup>
+</popupset>
+
+</overlay>

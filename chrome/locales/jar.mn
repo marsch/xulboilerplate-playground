@@ -1,0 +1,9 @@
+#filter substitution
+@AB_CD@.jar:
+% locale playground @AB_CD@ %
+  playground.dtd                (@AB_CD@/playground.dtd)
+  playground.properties         (@AB_CD@/playground.properties)
+  baseMenuOverlay.dtd         (@AB_CD@/baseMenuOverlay.dtd)
+  aboutHome.dtd               (@AB_CD@/aboutHome.dtd)
+  browser.dtd                 (@AB_CD@/browser.dtd)
+  browser.properties          (@AB_CD@/browser.properties)

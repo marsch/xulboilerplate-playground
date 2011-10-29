@@ -1,0 +1,11 @@
+playground.jar:
+% content playground %content/
+% content playground %content/ contentaccessible=yes
+
+* content/hiddenWindow.xul
+* content/browser.xul
+* content/baseMenuOverlay.xul
+* content/macOverlay.xul
+  content/main.js
+* content/utilityOverlay.js
+* content/macOverlay.xul

@@ -1,0 +1,12 @@
+<?xul-overlay href='chrome://global/content/editMenuOverlay.xul'?>
+<?xul-overlay href='chrome://playground/content/baseMenuOverlay.xul'?>
+
+<window
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" >
+
+<hbox flex='1'>
+	<description>hello</description>
+</hbox>
+
+
+</window>

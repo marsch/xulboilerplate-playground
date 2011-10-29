@@ -1,0 +1,14 @@
+#filter substitution
+
+playground.jar:
+% content branding %branding/
+% locale branding @AB_CD@ %branding/
+* branding/brand.dtd                   (brand.dtd)
+* branding/brand.properties            (brand.properties)
+  branding/icon16.png                  (icon16.png)
+  branding/icon32.png                  (icon32.png)
+  branding/icon48.png                  (icon48.png)
+  branding/icon64.png                  (icon64.png)
+  branding/icon128.png                 (icon128.png)
+  branding/icon256.png                 (icon256.png)
+  branding/icon512.png                 (icon512.png)

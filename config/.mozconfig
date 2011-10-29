@@ -1,0 +1,8 @@
+# Options for client.mk.
+mk_add_options MOZ_CO_PROJECTS=browser
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/../playground-build
+
+# Options for 'configure' (same as command-line options).
+ac_add_options --with-libxul-sdk=/Users/mario/Documents/_arbeit/PLAYGROUND/xul/xulrunner-sdk
+ac_add_options --enable-application=playground
+ac_add_options --enable-ui-locale=en-US
